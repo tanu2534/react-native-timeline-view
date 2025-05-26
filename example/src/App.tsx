@@ -1,20 +1,34 @@
-import { multiply } from 'react-native-timeline-view';
-import { Text, View, StyleSheet } from 'react-native';
+// import React from 'react';
+import { SafeAreaView } from 'react-native'; 
+import  TimeLineView  from 'react-native-timeline-view';
 
-const result = multiply(3, 7);
-
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Result: {result}</Text>
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+const mockSlots = [
+  {
+    slot: new Date().toISOString(),
+    available: false,
+    booking: {
+      title: 'A meeting for testing',
+      startDate: new Date().toISOString(),
+      endDate: new Date(Date.now() + 30 * 60000).toISOString(), // 30 min later
+    },
   },
-});
+  {
+    slot: new Date(Date.now() + 60 * 60000).toISOString(),
+    available: false,
+    booking: {
+      title: 'Designing issues resolutions',
+      startDate: new Date(Date.now() + 60 * 60000).toISOString(),
+      endDate: new Date(Date.now() + 90 * 60000).toISOString(),
+    },
+  },
+];
+
+const App = () => {
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <TimeLineView slots={mockSlots} onPress={(slot : any) => console.log(slot)} />
+    </SafeAreaView>
+  );
+};
+
+export default App;
