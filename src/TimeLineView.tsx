@@ -42,24 +42,25 @@ const TimeLineView: React.FC<TimeLineViewProps> = ({
   fetchSlots,
 }) => {
   const [landscape] = useState<boolean>(initialWidth > initialHeight);
-  const [generatedHours, setGeneratedHours] = useState(() => generateHours(slots));
+  const [generatedHours, setGeneratedHours] = useState(() =>
+    generateHours(slots)
+  );
 
   useEffect(() => {
     setGeneratedHours(generateHours(slots));
   }, [slots]);
 
-useEffect(() => {
-  if (autoRefresh && typeof fetchSlots === 'function') {
-    const interval = setInterval(async () => {
-      const updatedSlots = await fetchSlots();
-      setGeneratedHours(generateHours(updatedSlots));
-    }, pollingInterval);
-    return () => clearInterval(interval);
-  }
+  useEffect(() => {
+    if (autoRefresh && typeof fetchSlots === 'function') {
+      const interval = setInterval(async () => {
+        const updatedSlots = await fetchSlots();
+        setGeneratedHours(generateHours(updatedSlots));
+      }, pollingInterval);
+      return () => clearInterval(interval);
+    }
 
-  return undefined; // ✅ this solves it
-}, [autoRefresh, pollingInterval, fetchSlots]);
-
+    return undefined; // ✅ this solves it
+  }, [autoRefresh, pollingInterval, fetchSlots]);
 
   const renderTimeSlot = (hourObj: any, index: number) => {
     const hour = hourObj.time;
@@ -130,20 +131,27 @@ const generateHours = (slots: Slot[]) => {
   let currentTime = slots[0]?.slot ? new Date(slots[0].slot) : new Date();
   currentTime.setMinutes(0, 0, 0);
 
-  const bookings = slots.filter(slot => slot.booking).map(slot => slot.booking!) as Booking[];
+  const bookings = slots
+    .filter((slot) => slot.booking)
+    .map((slot) => slot.booking!) as Booking[];
 
   while (hours.length < minElements) {
     const slotStart = new Date(currentTime);
     const slotEnd = new Date(slotStart);
     slotEnd.setMinutes(slotEnd.getMinutes() + intervalMinutes);
 
-    const overlappingBooking = bookings.find(b => {
+    const overlappingBooking = bookings.find((b) => {
       const start = new Date(b.startDate);
       const end = new Date(b.endDate);
-      return (start <= slotStart && end > slotStart) || (start < slotEnd && end >= slotEnd);
+      return (
+        (start <= slotStart && end > slotStart) ||
+        (start < slotEnd && end >= slotEnd)
+      );
     });
 
-    const matchingSlot = slots.find(slot => new Date(slot.slot).toISOString() === slotStart.toISOString());
+    const matchingSlot = slots.find(
+      (slot) => new Date(slot.slot).toISOString() === slotStart.toISOString()
+    );
 
     const hour = formatTime(slotStart);
 
@@ -165,7 +173,8 @@ const formatTime = (date: Date): string => {
   const minutes = date.getMinutes();
   const period = hours >= 12 ? 'PM' : 'AM';
   hours = hours % 12 || 12;
-  const paddedMinutes = minutes === 0 ? '00' : minutes.toString().padStart(2, '0');
+  const paddedMinutes =
+    minutes === 0 ? '00' : minutes.toString().padStart(2, '0');
   return `${hours}:${paddedMinutes} ${period}`;
 };
 

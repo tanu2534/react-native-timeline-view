@@ -1,6 +1,6 @@
 // import React from 'react';
-import { SafeAreaView } from 'react-native'; 
-import  TimeLineView  from 'react-native-timeline-view';
+import { SafeAreaView } from 'react-native';
+import TimeLineView from 'react-native-timeline-view';
 
 const mockSlots = [
   {
@@ -26,7 +26,10 @@ const mockSlots = [
 const App = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <TimeLineView slots={mockSlots} onPress={(slot : any) => console.log(slot)} />
+      <TimeLineView
+        slots={mockSlots}
+        onPress={(slot: any) => console.log(slot)}
+      />
     </SafeAreaView>
   );
 };
