@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,12 +6,34 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  type ViewStyle,
+  type StyleProp,
 } from 'react-native';
-import PropTypes from 'prop-types';
 
 const { width: initialWidth, height: initialHeight } = Dimensions.get('window');
 
-const TimelineView = ({
+interface Booking {
+  title: string;
+  startDate: string;
+  endDate: string;
+}
+
+export interface Slot {
+  slot: string;
+  available: boolean;
+  booking?: Booking;
+}
+
+interface TimeLineViewProps {
+  slots: Slot[];
+  onPress: (slot: any) => void;
+  dynamicStyle?: StyleProp<ViewStyle>;
+  autoRefresh?: boolean;
+  pollingInterval?: number;
+  fetchSlots?: () => Promise<Slot[]>;
+}
+
+const TimeLineView: React.FC<TimeLineViewProps> = ({
   slots = [],
   onPress,
   dynamicStyle,
@@ -19,14 +41,14 @@ const TimelineView = ({
   pollingInterval = 2000,
   fetchSlots,
 }) => {
-  const [landscape, setLandscape] = useState(initialWidth > initialHeight);
-  const [generatedHours, setGeneratedHours] = useState(() => generateHours(slots));
+  const [landscape] = useState<boolean>(initialWidth > initialHeight);
+  const [generatedHours, setGeneratedHours] = useState(() =>
+    generateHours(slots)
+  );
 
   useEffect(() => {
     setGeneratedHours(generateHours(slots));
   }, [slots]);
-
-  
 
   useEffect(() => {
     if (autoRefresh && typeof fetchSlots === 'function') {
@@ -36,9 +58,11 @@ const TimelineView = ({
       }, pollingInterval);
       return () => clearInterval(interval);
     }
+
+    return undefined; // ✅ this solves it
   }, [autoRefresh, pollingInterval, fetchSlots]);
 
-  const renderTimeSlot = (hourObj, index) => {
+  const renderTimeSlot = (hourObj: any, index: number) => {
     const hour = hourObj.time;
     const now = new Date();
     const [time, period] = hour.split(' ');
@@ -59,7 +83,7 @@ const TimelineView = ({
       <TouchableOpacity
         key={index}
         onPress={() => onPress?.(hourObj)}
-        style={[styles.hourContainer]}
+        style={styles.hourContainer}
       >
         {!hourObj.available && (
           <View style={styles.unavailableSlot}>
@@ -81,7 +105,11 @@ const TimelineView = ({
 
   return (
     <ScrollView
-      style={[styles.scrollContainer, !landscape ? { height: 350, width: 650 } : {}, dynamicStyle]}
+      style={[
+        styles.scrollContainer,
+        !landscape ? { height: 350, width: 650 } : {},
+        dynamicStyle,
+      ]}
       showsVerticalScrollIndicator
       persistentScrollbar
     >
@@ -96,27 +124,34 @@ const TimelineView = ({
   );
 };
 
-const generateHours = (slots) => {
+const generateHours = (slots: Slot[]) => {
   const hours = [];
   const minElements = 20;
   const intervalMinutes = 15;
-  let currentTime = slots.length > 0 ? new Date(slots[0].slot) : new Date();
+  let currentTime = slots[0]?.slot ? new Date(slots[0].slot) : new Date();
   currentTime.setMinutes(0, 0, 0);
 
-  const bookings = slots.filter(slot => slot.booking).map(slot => slot.booking);
+  const bookings = slots
+    .filter((slot) => slot.booking)
+    .map((slot) => slot.booking!) as Booking[];
 
   while (hours.length < minElements) {
     const slotStart = new Date(currentTime);
     const slotEnd = new Date(slotStart);
     slotEnd.setMinutes(slotEnd.getMinutes() + intervalMinutes);
 
-    const overlappingBooking = bookings.find(b => {
+    const overlappingBooking = bookings.find((b) => {
       const start = new Date(b.startDate);
       const end = new Date(b.endDate);
-      return (start <= slotStart && end > slotStart) || (start < slotEnd && end >= slotEnd);
+      return (
+        (start <= slotStart && end > slotStart) ||
+        (start < slotEnd && end >= slotEnd)
+      );
     });
 
-    const matchingSlot = slots.find(slot => new Date(slot.slot).toISOString() === slotStart.toISOString());
+    const matchingSlot = slots.find(
+      (slot) => new Date(slot.slot).toISOString() === slotStart.toISOString()
+    );
 
     const hour = formatTime(slotStart);
 
@@ -133,22 +168,14 @@ const generateHours = (slots) => {
   return hours;
 };
 
-const formatTime = (date) => {
+const formatTime = (date: Date): string => {
   let hours = date.getHours();
   const minutes = date.getMinutes();
   const period = hours >= 12 ? 'PM' : 'AM';
   hours = hours % 12 || 12;
-  const paddedMinutes = minutes === 0 ? '00' : minutes.toString().padStart(2, '0');
+  const paddedMinutes =
+    minutes === 0 ? '00' : minutes.toString().padStart(2, '0');
   return `${hours}:${paddedMinutes} ${period}`;
-};
-
-TimelineView.propTypes = {
-  slots: PropTypes.array.isRequired,
-  onPress: PropTypes.func.isRequired,
-  dynamicStyle: PropTypes.object,
-  autoRefresh: PropTypes.bool,
-  pollingInterval: PropTypes.number,
-  fetchSlots: PropTypes.func,
 };
 
 const styles = StyleSheet.create({
@@ -223,4 +250,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TimelineView;
+export default TimeLineView;
