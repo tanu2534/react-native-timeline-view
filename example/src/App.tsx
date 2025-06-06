@@ -26,7 +26,16 @@ const mockEvents = [
 const App = () => {
   return (
     <SafeAreaView style={{ flex: 1, marginTop: 60 }}>
-      <Text style={{ fontSize: 20, fontWeight: 'bold', alignSelf: 'center', opacity: 0.6 }}>Time Line</Text>
+      <Text
+        style={{
+          fontSize: 20,
+          fontWeight: 'bold',
+          alignSelf: 'center',
+          opacity: 0.6,
+        }}
+      >
+        Time Line
+      </Text>
       <TimeLineView
         slots={mockEvents}
         onPress={(slot) => console.log(slot)}
@@ -35,24 +44,23 @@ const App = () => {
         labelEverySlot={2}
         renderBookingContent={(Event, index) => (
           <View key={index} style={{ padding: 5 }}>
-            <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Event : {Event.title}</Text>
+            <Text style={{ fontWeight: 'bold', fontSize: 16 }}>
+              Event : {Event.title}
+            </Text>
             <Text style={{ fontSize: 10, color: '#666' }}>
-              {new Date(Event.startDate).toLocaleTimeString()} - {new Date(Event.endDate).toLocaleTimeString()}
+              {new Date(Event.startDate).toLocaleTimeString()} -{' '}
+              {new Date(Event.endDate).toLocaleTimeString()}
             </Text>
           </View>
         )}
-
         stylesConfig={{
           currentLine: { backgroundColor: 'red', width: '80%' },
           currentDot: { backgroundColor: 'red' },
           hourContainer: { width: '95%' },
           scrollContainer: { backgroundColor: 'white', width: '100%' },
-          unavailableSlot: { backgroundColor: '#D3D3D3', },
-
+          unavailableSlot: { backgroundColor: '#D3D3D3' },
         }}
-
       />
-
     </SafeAreaView>
   );
 };

@@ -35,7 +35,6 @@ interface TimeLineViewStyles {
   unavailableSlot?: StyleProp<ViewStyle>;
   EventTitle?: StyleProp<ViewStyle>;
   slotContainer?: StyleProp<ViewStyle>;
-
 }
 
 interface TimeLineViewProps {
@@ -82,19 +81,35 @@ const TimeLineView: React.FC<TimeLineViewProps> = ({
   }, []);
 
   useEffect(() => {
-    setGeneratedHours(generateHours(slots, startTime, slotDuration, roundToNearestSlot));
+    setGeneratedHours(
+      generateHours(slots, startTime, slotDuration, roundToNearestSlot)
+    );
   }, [slots, startTime, slotDuration, roundToNearestSlot]);
 
   useEffect(() => {
     if (autoRefresh && typeof fetchSlots === 'function') {
       const interval = setInterval(async () => {
         const updatedSlots = await fetchSlots();
-        setGeneratedHours(generateHours(updatedSlots, startTime, slotDuration, roundToNearestSlot));
+        setGeneratedHours(
+          generateHours(
+            updatedSlots,
+            startTime,
+            slotDuration,
+            roundToNearestSlot
+          )
+        );
       }, pollingInterval);
       return () => clearInterval(interval);
     }
     return undefined;
-  }, [autoRefresh, pollingInterval, fetchSlots, startTime, slotDuration, roundToNearestSlot]);
+  }, [
+    autoRefresh,
+    pollingInterval,
+    fetchSlots,
+    startTime,
+    slotDuration,
+    roundToNearestSlot,
+  ]);
 
   const renderTimeSlot = (hourObj: any, index: number) => {
     const hour = hourObj.time;
@@ -125,30 +140,42 @@ const TimeLineView: React.FC<TimeLineViewProps> = ({
       if (!isCurrentTimeSlot) return 0;
       const elapsed = now.getTime() - slotStart.getTime();
       const total = slotEnd.getTime() - slotStart.getTime();
-      const percent = (elapsed / total);
+      const percent = elapsed / total;
       return percent * currentSlotHeight;
     };
 
     const currentTimeOffset = calculateCurrentTimeOffset();
 
     const calculateBookingOffsetAndHeight = () => {
-      if (!hourObj.Event || hourObj.available) return { height: currentSlotHeight, top: 0 };
+      if (!hourObj.Event || hourObj.available)
+        return { height: currentSlotHeight, top: 0 };
 
       const EventStart = new Date(hourObj.Event.startDate);
       const EventEnd = new Date(hourObj.Event.endDate);
 
-      const overlapStart = new Date(Math.max(EventStart.getTime(), slotStart.getTime()));
-      const overlapEnd = new Date(Math.min(EventEnd.getTime(), slotEnd.getTime()));
-      const overlapDuration = Math.max(0, (overlapEnd.getTime() - overlapStart.getTime()) / (1000 * 60));
+      const overlapStart = new Date(
+        Math.max(EventStart.getTime(), slotStart.getTime())
+      );
+      const overlapEnd = new Date(
+        Math.min(EventEnd.getTime(), slotEnd.getTime())
+      );
+      const overlapDuration = Math.max(
+        0,
+        (overlapEnd.getTime() - overlapStart.getTime()) / (1000 * 60)
+      );
 
-      const offsetMinutes = Math.max(0, (overlapStart.getTime() - slotStart.getTime()) / (1000 * 60));
+      const offsetMinutes = Math.max(
+        0,
+        (overlapStart.getTime() - slotStart.getTime()) / (1000 * 60)
+      );
       const offsetTop = offsetMinutes * slotHeightPerMinute;
       const height = overlapDuration * slotHeightPerMinute;
 
       return { height, top: offsetTop };
     };
 
-    const { height: EventHeight, top: EventOffsetTop } = calculateBookingOffsetAndHeight();
+    const { height: EventHeight, top: EventOffsetTop } =
+      calculateBookingOffsetAndHeight();
 
     return (
       <TouchableOpacity
@@ -168,29 +195,35 @@ const TimeLineView: React.FC<TimeLineViewProps> = ({
               },
             ]}
           >
-            {renderBookingContent
-              ? renderBookingContent(hourObj.Event, index)
-              : (
-                <Text style={[styles.EventTitle, stylesConfig.EventTitle]}>
-                  {hourObj?.Event?.title || 'Reserved'}
-                </Text>
-              )
-            }
+            {renderBookingContent ? (
+              renderBookingContent(hourObj.Event, index)
+            ) : (
+              <Text style={[styles.EventTitle, stylesConfig.EventTitle]}>
+                {hourObj?.Event?.title || 'Reserved'}
+              </Text>
+            )}
           </View>
         )}
 
         {isCurrentTimeSlot && (
-          <View style={[
-            styles.currentLine,
-            stylesConfig.currentLine,
-            {
-              top: currentTimeOffset,
-              transform: [{ translateY: -1 }]
-            }
-          ]}>
-            <View style={[styles.currentDot, stylesConfig.currentDot]}>
-            </View>
-            <Text style={[styles.hourText, stylesConfig.hourText, { position: 'absolute', right: -70 }]}>
+          <View
+            style={[
+              styles.currentLine,
+              stylesConfig.currentLine,
+              {
+                top: currentTimeOffset,
+                transform: [{ translateY: -1 }],
+              },
+            ]}
+          >
+            <View style={[styles.currentDot, stylesConfig.currentDot]}></View>
+            <Text
+              style={[
+                styles.hourText,
+                stylesConfig.hourText,
+                { position: 'absolute', right: -70 },
+              ]}
+            >
               {formatTime(now)}
             </Text>
           </View>
@@ -210,7 +243,6 @@ const TimeLineView: React.FC<TimeLineViewProps> = ({
     );
   };
 
-
   return (
     <ScrollView
       style={[
@@ -224,7 +256,10 @@ const TimeLineView: React.FC<TimeLineViewProps> = ({
     >
       <View style={[styles.container, stylesConfig.container]}>
         {generatedHours.map((hour, index) => (
-          <View key={index} style={[styles.slotContainer, stylesConfig.slotContainer]}>
+          <View
+            key={index}
+            style={[styles.slotContainer, stylesConfig.slotContainer]}
+          >
             {renderTimeSlot(hour, index)}
           </View>
         ))}
@@ -275,7 +310,7 @@ const generateHours = (
       const start = new Date(b.startDate);
       const end = new Date(b.endDate);
       return (
-        (start < slotEnd && end > slotStart) // Any overlap
+        start < slotEnd && end > slotStart // Any overlap
       );
     });
 
