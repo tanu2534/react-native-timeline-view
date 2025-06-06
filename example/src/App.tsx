@@ -1,35 +1,58 @@
 // import React from 'react';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView, View, Text } from 'react-native';
 import TimeLineView from 'react-native-timeline-view';
 
-const mockSlots = [
+const mockEvents = [
   {
-    slot: new Date().toISOString(),
+    slot: new Date(new Date().setHours(19, 30, 0, 0)).toISOString(),
     available: false,
-    booking: {
-      title: 'A meeting for testing',
-      startDate: new Date().toISOString(),
-      endDate: new Date(Date.now() + 30 * 60000).toISOString(), // 30 min later
+    Event: {
+      title: 'Food For Thought',
+      startDate: new Date(new Date().setHours(19, 30, 0, 0)).toISOString(),
+      endDate: new Date(new Date().setHours(19, 47, 0, 0)).toISOString(), // 30 min later
     },
   },
   {
-    slot: new Date(Date.now() + 60 * 60000).toISOString(),
+    slot: new Date(new Date().setHours(21, 17, 0, 0)).toISOString(),
     available: false,
-    booking: {
-      title: 'Designing issues resolutions',
-      startDate: new Date(Date.now() + 60 * 60000).toISOString(),
-      endDate: new Date(Date.now() + 90 * 60000).toISOString(),
+    Event: {
+      title: 'Lunch',
+      startDate: new Date(new Date().setHours(21, 0, 0, 0)).toISOString(),
+      endDate: new Date(new Date().setHours(21, 30, 0, 0)).toISOString(),
     },
   },
 ];
 
 const App = () => {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, marginTop: 60 }}>
+      <Text style={{ fontSize: 20, fontWeight: 'bold', alignSelf: 'center', opacity: 0.6 }}>Time Line</Text>
       <TimeLineView
-        slots={mockSlots}
-        onPress={(slot: any) => console.log(slot)}
+        slots={mockEvents}
+        onPress={(slot) => console.log(slot)}
+        startTime={new Date(new Date().setHours(19, 0, 0, 0))}
+        slotDuration={30}
+        labelEverySlot={2}
+        renderBookingContent={(Event, index) => (
+          <View key={index} style={{ padding: 5 }}>
+            <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Event : {Event.title}</Text>
+            <Text style={{ fontSize: 10, color: '#666' }}>
+              {new Date(Event.startDate).toLocaleTimeString()} - {new Date(Event.endDate).toLocaleTimeString()}
+            </Text>
+          </View>
+        )}
+
+        stylesConfig={{
+          currentLine: { backgroundColor: 'red', width: '80%' },
+          currentDot: { backgroundColor: 'red' },
+          hourContainer: { width: '95%' },
+          scrollContainer: { backgroundColor: 'white', width: '100%' },
+          unavailableSlot: { backgroundColor: '#D3D3D3', },
+
+        }}
+
       />
+
     </SafeAreaView>
   );
 };
