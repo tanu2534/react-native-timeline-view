@@ -22,7 +22,7 @@ npm install react-native-timeline-view
 ## Basic Usage
 
 ```tsx
-tsximport React from 'react';
+import React from 'react';
 import { SafeAreaView } from 'react-native';
 import TimeLineView from 'react-native-timeline-view';
 
@@ -75,7 +75,7 @@ export default App;
  ## Slot
 
  ```tsx
-tsxinterface Slot {
+interface Slot {
   slot: string; // ISO date string
   available: boolean;
   Event?: Booking;
@@ -85,7 +85,7 @@ tsxinterface Slot {
 ## Booking
 
 ```tsx
-tsxinterface Booking {
+interface Booking {
   title: string;
   startDate: string; // ISO date string
   endDate: string;   // ISO date string
@@ -94,7 +94,7 @@ tsxinterface Booking {
 
 ## TimeLineViewStyles
 ```tsx
-tsxinterface TimeLineViewStyles {
+interface TimeLineViewStyles {
   scrollContainer?: StyleProp<ViewStyle>;
   container?: StyleProp<ViewStyle>;
   hourContainer?: StyleProp<ViewStyle>;
@@ -112,7 +112,7 @@ tsxinterface TimeLineViewStyles {
 ## Advanced Example
 
 ```tsx
-tsximport React from 'react';
+import React from 'react';
 import { SafeAreaView, View, Text } from 'react-native';
 import TimeLineView from 'react-native-timeline-view';
 
@@ -179,7 +179,7 @@ export default App;
 You can customize the appearance using the stylesConfig prop:
 
 ```tsx
-tsxconst customStyles = {
+const customStyles = {
   scrollContainer: { backgroundColor: '#f5f5f5' },
   currentLine: { backgroundColor: '#ff6b6b', height: 3 },
   currentDot: { backgroundColor: '#ff6b6b', width: 14, height: 14 },
@@ -195,7 +195,7 @@ tsxconst customStyles = {
 Enable real-time updates by providing a fetch function:
 
 ```tsx
-tsxconst fetchSlots = async () => {
+const fetchSlots = async () => {
   const response = await fetch('/api/slots');
   return response.json();
 };
