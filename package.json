@@ -1,6 +1,6 @@
 {
   "name": "react-native-timeline-view",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "react-native-timeline-view is a fully customizable timeline component for React Native that renders time slots with smart booking display. It highlights ongoing meetings with real-time indicators, supports multi-slot bookings, and displays available/unavailable slots in a clean and intuitive UI.",
   "source": "./src/index.tsx",
   "main": "./lib/module/index.js",
@@ -148,5 +148,8 @@
     "languages": "js",
     "type": "library",
     "version": "0.49.2"
+  },
+  "dependencies": {
+    "react-native-cli": "^2.0.1"
   }
 }
