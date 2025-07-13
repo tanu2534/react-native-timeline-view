@@ -109,6 +109,13 @@ interface TimeLineViewStyles {
 ```
 
 
+## 📅 Sample Timeline Preview
+
+This is how the timeline view looks in action:
+
+![Timeline Screenshot](../react-native-timeline-view/assets/rntimeline.jpg)
+
+
 ## Advanced Example
 
 ```tsx
