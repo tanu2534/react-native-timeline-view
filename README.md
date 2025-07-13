@@ -113,7 +113,7 @@ interface TimeLineViewStyles {
 
 This is how the timeline view looks in action:
 
-![Timeline Screenshot](./assets/rntimeline.jpg)
+![Timeline Screenshot](./assets/rntimeline-compressed.jpg)
 
 
 ## Advanced Example
