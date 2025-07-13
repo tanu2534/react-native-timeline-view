@@ -113,7 +113,7 @@ interface TimeLineViewStyles {
 
 This is how the timeline view looks in action:
 
-![Timeline Screenshot](../react-native-timeline-view/assets/rntimeline.jpg)
+![Timeline Screenshot](./assets/rntimeline.jpg)
 
 
 ## Advanced Example
